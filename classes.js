@@ -39,7 +39,7 @@ class ZMSpletIzbiraDogodka{
 
             // create the organiser element
             const organiser = document.createElement('p');
-            organiser.textContent = `Organizator: ${dogodek.organizator.ime}`;
+            organiser.textContent = `Organizator: ${dogodek.organizator.ime} ${dogodek.organizator.priimek}`;
 
             // create the tickets element
             const tickets = document.createElement('p');
@@ -121,7 +121,15 @@ class Organizator {
       this.dogodki = [];
     }
 
-    addDogodek(dogodek) {
+    vrniDogodke(){
+        return this.dogodki;
+    }
+
+    vrniIme(){
+        return this.ime;
+    }
+
+    dodajDogodek(dogodek) {
         this.dogodki.push(dogodek);
     }
 }
@@ -136,6 +144,9 @@ class Racun {
         this.organizator = organizator;
         this.cena = 0;
     }    
+    vrniCeno(){
+        return this.cena;
+    }
 }
   
 class Uporabnik {
@@ -150,6 +161,14 @@ class Uporabnik {
 
     dodajRacun(racun){
         this.racuni.push(racun);
+    }
+
+    vrniIme(){
+        return this.ime;
+    }
+
+    vrniEmail(){
+        return this.email;
     }
   
     
@@ -166,6 +185,15 @@ class Dogodek {
         this.vsaMesta = vsaMesta;
         this.zasedenaMesta = zasedenaMesta;
     }
+    vrniCeno(){
+        return this.cena;
+    }
+    vrniZasedenaMesta(){
+        return this.zasedenaMesta;
+    }
+    vrniVsaMesta(){
+        return this.vsaMesta;
+    }
 
 }
 
@@ -174,16 +202,21 @@ let dogodki = [];
 let uporabniki = [];
 let racuni = [];
   
-let organizator = new Organizator("John Doe");
-let dogodek = new Dogodek("test.jpg", "Skisova trznica", "2023-06-01", "Ljubljana", 20, organizator, 100, 95);
-let dogodek1 = new Dogodek("test.jpg", "Koncert", "2023-06-01", "Ljubljana", 20, organizator, 100, 20);
-let dogodek2 = new Dogodek("test.jpg", "Festival", "2023-07-15", "Maribor", 50, organizator, 500, 100);
-let dogodek3 = new Dogodek("test.jpg", "Gledališka predstava", "2023-09-03", "Celje", 15, organizator, 200, 50);
+let organizator = new Organizator("Testni", "Organizator", "test@gmail.com");
+let organizator1 = new Organizator("Damjan", "Fujs", "damjan.fujs@gmail.com");
+let dogodek = new Dogodek("slike/skisova.jpg", "Skisova trznica", "2023-06-01", "Ljubljana", 20, organizator, 100, 95);
+let dogodek1 = new Dogodek("slike/sidd.jpg", "Koncert", "2023-06-01", "Ljubljana", 20, organizator, 100, 20);
+let dogodek2 = new Dogodek("slike/cvetka.jpg", "Festival", "2023-07-15", "Maribor", 50, organizator, 500, 100);
+let dogodek3 = new Dogodek("slike/ickoti.jpeg", "Gledališka predstava", "2023-09-03", "Celje", 15, organizator, 200, 50);
+let dogodek4 = new Dogodek("slike/cirkus.jpg", "Študentski žur", "2023-09-03", "Ljubljana", 5, organizator, 200, 198);
+let dogodek5 = new Dogodek("slike/ris.png", "Najboljše vaje", "2023-09-03", "Ljubljana", 0, organizator1, 1000, 1000);
 dogodki.push(dogodek);
 dogodki.push(dogodek1);
 dogodki.push(dogodek2);
 dogodki.push(dogodek3);
-let uporabnik = new Uporabnik("Jane Smith", "jane@example.com");
+dogodki.push(dogodek4);
+dogodki.push(dogodek5);
+let uporabnik = new Uporabnik("Luka", "Volk", "Geslo123", "luka.volk@gmail.com", "1000 Ljubljana", "");
 let rezervacija = new KRezervacijaDogodka();
 
 
@@ -210,7 +243,7 @@ document.addEventListener("DOMContentLoaded", function() {
             let racun = new Racun(uporabnik, dogodki[indeks], kolicina, cena);
             console.log(racun);
             maska.posodobiZasedenost(kolicina, indeks, row);
-            alert(`Račun za ${cena}€ poslan na mail`);
+            alert(`Račun za ${cena}€ poslan na mail: ${uporabnik.email}`);
             uporabnik.dodajRacun(racun); // preveri kdo je prijavljen
         }
         else if(zasedenost == false){
