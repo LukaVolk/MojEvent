@@ -3,82 +3,93 @@ class ZMSpletIzbiraDogodka{
 
     prikaziDogodke(dogodki){
         console.log(dogodki);
-        // Get the table body element
-        let dogodkiTableBody = document.querySelector('#dogodki-table tbody');
+        let dogodkiDiv = document.querySelector('#dogodki-div');
 
         // Loop through the dogodki array and create a row for each element
         for (let i = 0; i < dogodki.length; i++) {
             let dogodek = dogodki[i];
-            
-            let newRow = document.createElement('tr');
-            
-            let nazivCell = document.createElement('td');
-            nazivCell.textContent = dogodek.naziv;
-            newRow.appendChild(nazivCell);
-            
-            let datumCell = document.createElement('td');
-            datumCell.textContent = dogodek.datum;
-            newRow.appendChild(datumCell);
-            
-            let krajCell = document.createElement('td');
-            krajCell.textContent = dogodek.kraj;
-            newRow.appendChild(krajCell);
-            
-            let cenaKarteCell = document.createElement('td');
-            cenaKarteCell.textContent = dogodek.cena;
-            newRow.appendChild(cenaKarteCell);
-            
-            let organizatorCell = document.createElement('td');
-            organizatorCell.textContent = dogodek.organizator.ime;
-            newRow.appendChild(organizatorCell);
-            
-            let vsaMestaCell = document.createElement('td');
-            vsaMestaCell.textContent = dogodek.vsaMesta;
-            newRow.appendChild(vsaMestaCell);
-            
-            let zasedenaMestaCell = document.createElement('td');
-            zasedenaMestaCell.textContent = dogodek.zasedenaMesta;
-            newRow.appendChild(zasedenaMestaCell);
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.classList.add(i);
 
-            let kolicinaKartCell = document.createElement('input');
-            kolicinaKartCell.type = "number";
-            kolicinaKartCell.min = 0;
-            kolicinaKartCell.max = 10;
-            kolicinaKartCell.step = 1;
-            kolicinaKartCell.value = 0;
-            newRow.appendChild(kolicinaKartCell);
+            // create the image element
+            const img = document.createElement('img');
+            img.src = dogodek.slika;
+            img.alt = dogodek.naziv;
 
-            let rezervirajCell = document.createElement('button');
-            rezervirajCell.textContent = "Rezerviraj";
-            rezervirajCell.classList.add("rezervirajButton");
-            newRow.appendChild(rezervirajCell);
+            // create the content element
+            const content = document.createElement('div');
+            content.classList.add('content');
 
+            // create the title element
+            const title = document.createElement('h2');
+            title.textContent = dogodek.naziv;
+
+            // create the date element
+            const date = document.createElement('p');
+            date.textContent = `Datum: ${dogodek.datum}`;
+
+            // create the city element
+            const city = document.createElement('p');
+            city.textContent = `Kraj dogodka: ${dogodek.kraj}`;
+
+            // create the price element
+            const price = document.createElement('p');
+            price.textContent = `Cena: ${dogodek.cena} €`;
+
+            // create the organiser element
+            const organiser = document.createElement('p');
+            organiser.textContent = `Organizator: ${dogodek.organizator.ime}`;
+
+            // create the tickets element
+            const tickets = document.createElement('p');
+            console.log(dogodek.vsaMesta, dogodek.zasedenaMesta);
+            tickets.textContent = `Proste vstopnice: ${dogodek.vsaMesta-dogodek.zasedenaMesta} / ${dogodek.vsaMesta}`;
+            tickets.classList.add("stMest");
+            // create the input element
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.min = 0;
+            input.max = 10;
+
+            // create the button element
+            const button = document.createElement('button');
+            button.textContent = 'Rezerviraj';
+            button.classList.add("rezervirajButton");
             
-            // Append the row to the table body
-            dogodkiTableBody.appendChild(newRow);
+
+            // append the elements to the card element
+            content.appendChild(title);
+            content.appendChild(date);
+            content.appendChild(city);
+            content.appendChild(price);
+            content.appendChild(organiser);
+            content.appendChild(tickets);
+            content.appendChild(input);
+            content.appendChild(button);
+            card.appendChild(img);
+            card.appendChild(content);
+
+
+            // append the card element to the container element
+            dogodkiDiv.appendChild(card);
+            
         }
 
         
     }
 
-    posodobiZasedenost(kolicina, row){
-        console.log(kolicina, row);
-        const cells = row.getElementsByTagName('td');
-        const zasedenaMesta = parseInt(cells[6].textContent) + kolicina; // zero-based indexing
-
-        console.log(dogodki[row.rowIndex - 1].zasedenaMesta);
-        dogodki[row.rowIndex - 1].zasedenaMesta = zasedenaMesta;
-        cells[6].textContent = zasedenaMesta;
-
+    posodobiZasedenost(kolicina, indeks, row){
+        console.log(kolicina, indeks);
+        dogodki[indeks].zasedenaMesta += kolicina;
+        row.querySelector('.stMest').textContent = `Proste vstopnice: ${dogodki[indeks].vsaMesta-dogodki[indeks].zasedenaMesta} / ${dogodki[indeks].vsaMesta}`;
+        
 
     }
 }
 
 class KRezervacijaDogodka {    
-    buttonListener(){
-        
-    }
-    
+
     izracunCene(cena, kolicina){
         return cena*kolicina;
     }
@@ -145,7 +156,8 @@ class Uporabnik {
 }
 
 class Dogodek {
-    constructor(naziv, datum, kraj, cena, organizator, vsaMesta, zasedenaMesta) {
+    constructor(slika, naziv, datum, kraj, cena, organizator, vsaMesta, zasedenaMesta) {
+        this.slika = slika;
         this.naziv = naziv;
         this.datum = datum;
         this.kraj = kraj;
@@ -163,15 +175,14 @@ let uporabniki = [];
 let racuni = [];
   
 let organizator = new Organizator("John Doe");
-let dogodek = new Dogodek("Skisova trznica", "2023-06-01", "Ljubljana", 20, organizator, 100, 95);
-let dogodek1 = new Dogodek("Koncert", "2023-06-01", "Ljubljana", 20, organizator, 100, 20);
-let dogodek2 = new Dogodek("Festival", "2023-07-15", "Maribor", 50, organizator, 500, 100);
-let dogodek3 = new Dogodek("Gledališka predstava", "2023-09-03", "Celje", 15, organizator, 200, 50);
+let dogodek = new Dogodek("test.jpg", "Skisova trznica", "2023-06-01", "Ljubljana", 20, organizator, 100, 95);
+let dogodek1 = new Dogodek("test.jpg", "Koncert", "2023-06-01", "Ljubljana", 20, organizator, 100, 20);
+let dogodek2 = new Dogodek("test.jpg", "Festival", "2023-07-15", "Maribor", 50, organizator, 500, 100);
+let dogodek3 = new Dogodek("test.jpg", "Gledališka predstava", "2023-09-03", "Celje", 15, organizator, 200, 50);
 dogodki.push(dogodek);
 dogodki.push(dogodek1);
 dogodki.push(dogodek2);
 dogodki.push(dogodek3);
-console.log(dogodki);
 let uporabnik = new Uporabnik("Jane Smith", "jane@example.com");
 let rezervacija = new KRezervacijaDogodka();
 
@@ -185,18 +196,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
     buttons.forEach(button => {
         button.addEventListener('click', function () {
-        
-        const row = button.parentNode;
+        var row = button.parentNode.parentNode;
+    
+        indeks = row.classList[1];
         let inputField = row.querySelector('input');
         let kolicina = parseInt(inputField.value);
-        const rowIndex = row.rowIndex - 1;
+        console.log(dogodki[indeks].vsaMesta);
 
-        let zasedenost = rezervacija.statusRezervacije(kolicina, dogodki[rowIndex].vsaMesta, dogodki[rowIndex].zasedenaMesta);
+        let zasedenost = rezervacija.statusRezervacije(kolicina, dogodki[indeks].vsaMesta, dogodki[indeks].zasedenaMesta);
         console.log(zasedenost);
         if (zasedenost == true){
-            let cena = rezervacija.izracunCene(dogodki[rowIndex].cena, kolicina);
-            let racun = new Racun(uporabnik, dogodki[rowIndex], kolicina, cena);
-            maska.posodobiZasedenost(kolicina, row);
+            let cena = rezervacija.izracunCene(dogodki[indeks].cena, kolicina);
+            let racun = new Racun(uporabnik, dogodki[indeks], kolicina, cena);
+            console.log(racun);
+            maska.posodobiZasedenost(kolicina, indeks, row);
             alert(`Račun za ${cena}€ poslan na mail`);
             uporabnik.dodajRacun(racun); // preveri kdo je prijavljen
         }
@@ -206,8 +219,7 @@ document.addEventListener("DOMContentLoaded", function() {
         else{
             alert("Vnesi število kart, ki jih želiš rezervirati.");
         }
-           
-        console.log(`Button clicked on row ${rowIndex}, ${kolicina}`);
+        row.querySelector('input').value = "";   
         });
     });
     
